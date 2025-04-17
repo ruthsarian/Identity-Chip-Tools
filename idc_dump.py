@@ -52,6 +52,12 @@ try:
 					break
 
 			wav_file.close()
+###
+### gross way to remove xff from end of audio files extracted
+###
+			wave_file = open(os.path.splitext(filename)[0] + str(t) + '_audio.wav',"a");
+			wave_size = os.path.getsize(os.path.splitext(filename)[0] + str(t) + '_audio.wav')
+			wave_file.truncate(wave_size-10)
 
 except FileNotFoundError:
 	print(f"File {filename} not found.")

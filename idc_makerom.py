@@ -84,6 +84,10 @@ with open(sys.argv[2], 'wb') as rom:
 	# HEADER 1
 
 	# number of tracks
+##
+## tested up to 14 tracks... may support more but untested
+##
+
 	rom.write(struct.pack(">h", len(pcm_data)))
 
 	# address of start of address table (hard-coded)
@@ -116,21 +120,35 @@ with open(sys.argv[2], 'wb') as rom:
 		# advance addr; +10 is for the 10 0xFF bytes that end every track
 		addr = addr + len(pcm) + 10
 
-	# ? address to where some configuration data is stored
+	# ? address to where ID & color is stored
 	rom.write(bytes([0,0x10,0]))
 
-	# ? address to where more configuration data is stored
-	rom.write(bytes([0,0x10,0]))
+	# ??
+	rom.write(bytes([0,0x20,0]))
 
 	# pad 0xFF until addres 0x0FF0
 	for _ in range(0xFF0 - rom.tell()):
 		rom.write(bytes([0xFF]))
 
 	# ? unknown configuration data
-	rom.write(bytes([0x7A,0x8C,0x00,0x00,0x00,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A]))
+#	rom.write(bytes([0x7A,0x8C,0x00,0x00,0x00,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A]))
+# lets use the config data from the identity program chip
+	rom.write(bytes([0xFE,0xCD,0x00,0x00,0x00,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A]))
 
-	# ? more configuration data; maybe some kind of ID or version?
-	rom.write(bytes([0x01, 0x04]))
+###
+###
+### bytes 1000 & 1001 are ID... major and minor
+### 0101 clu
+### 0102 rinzer
+### 0103 sam
+### 0104 quora
+### 0201 tron ID program
+### 0301 doesn't work (didn't try higher)
+### 
+### rinzler ID is special - wave files 2+ flash blue regardless of disc color
+###
+###
+	rom.write(bytes([0x02, 0x01]))
 
 	# write RGB values of color for the identity chip
 
@@ -174,3 +192,13 @@ with open(sys.argv[2], 'wb') as rom:
 		rom.write(bytes([0xFF]))
 
 	print("ROM'd " + str(rom.tell())+ " bytes!")
+
+
+###
+###
+### chip contains NO face data for identity disc program
+###    face data is stored in the figure itself
+###
+### identity program audio files spaced evenly apart at 256KB
+### --- is 256KB the max audio file size?  untested
+###
