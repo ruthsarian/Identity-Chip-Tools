@@ -84,11 +84,12 @@ with open(sys.argv[2], 'wb') as rom:
 	# HEADER 1
 
 	# number of tracks
+	# 
+	rom.write(struct.pack(">h", len(pcm_data)))
+
 ##
 ## tested up to 14 tracks... may support more but untested
 ##
-
-	rom.write(struct.pack(">h", len(pcm_data)))
 
 	# address of start of address table (hard-coded)
 	#rom.write(struct.pack(">i", 0x00000e)[1:])
@@ -131,23 +132,31 @@ with open(sys.argv[2], 'wb') as rom:
 		rom.write(bytes([0xFF]))
 
 	# ? unknown configuration data
-#	rom.write(bytes([0x7A,0x8C,0x00,0x00,0x00,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A]))
-# lets use the config data from the identity program chip
-	rom.write(bytes([0xFE,0xCD,0x00,0x00,0x00,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A]))
 
-###
-###
-### bytes 1000 & 1001 are ID... major and minor
-### 0101 clu
-### 0102 rinzer
-### 0103 sam
-### 0104 quora
-### 0201 tron ID program
-### 0301 doesn't work (didn't try higher)
-### 
-### rinzler ID is special - wave files 2+ flash blue regardless of disc color
-###
-###
+	# 2 bytes of data, different among identity chips
+	# size or checksum or something else? 
+	#
+	# 98 D8 Clu
+	# AC 9A Rinzler
+	# 0D 65 Sam Flynn
+	# 7A 8C Quora
+	# FE CD Identity Program
+	#
+	rom.write(bytes([0xFE,0xCD]))
+
+	# 14 bytes of data, seems to be the same across identity chips
+	rom.write(bytes([0x00,0x00,0x00,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A]))
+
+	# 2 bytes of data, probably a chip ID
+	# Rinzler ID is special - wave files 2+ flash blue regardless of disc color
+	#
+	# 0101 Clu
+	# 0102 Rinzler
+	# 0103 Sam Flynn
+	# 0104 Quora
+	# 0201 Identity Program
+	# 0301 - does not work
+	#
 	rom.write(bytes([0x02, 0x01]))
 
 	# write RGB values of color for the identity chip
