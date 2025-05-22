@@ -1,7 +1,7 @@
 # Identity Chip Tools
 This is a collection of [python](https://www.python.org/) tools to manipulate ROMs of identity chips from the [Tron Lightcycle / Run](https://disneyworld.disney.go.com/attractions/magic-kingdom/tron-lightcycle-run/) [Identity Program](https://disneyworld.disney.go.com/shops/magic-kingdom/tron-identity-program/).
 
-These tools have only been tested with a character identity chip. The Identity Program allows you to create your own identity chip that includes both audio AND images. The character chips do not appear to contain images so these tools do not take image data into account. If I am ever able to obtain an image of an identity program chip I will update these tools.
+Note: facial images of Identity Program figures are not stored/displayed digitally; they are small images printed on transparent film inside the head which are projected onto the face via one of 3 LEDs.
 
 ## idc_dump.py
 Given an identity chip image, it will extract all the audio into WAV files.
